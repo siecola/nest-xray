@@ -10,7 +10,7 @@ import { HttpEnvironmentModule } from "./environments/http";
 export class TracingModule {
   public static forRoot(options: TracingConfig): DynamicModule {
     return {
-      // Make TracingService available in the whole app
+      // Make TracingService available in the whole app      
       global: true,
       module: TracingModule,
       imports: [TracingCoreModule.forRoot(options)],

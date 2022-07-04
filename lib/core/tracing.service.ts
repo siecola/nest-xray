@@ -1,5 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import { Segment, Subsegment, plugins } from "aws-xray-sdk";
+import * as AWS from "aws-sdk"
 import { RequestHandler } from "express";
 import { AsyncContext } from "../async-hooks";
 import {
@@ -41,8 +42,9 @@ export class TracingService implements OnModuleInit {
     // AWSXRay uses continuation-local-storage for the automatic mode, this
     // does not work in async/await Scenarios. We will implement our own
     // "automatic mode"
+    this.xrayClient.captureAWS(require("aws-sdk"))
 
-    this.xrayClient.enableManualMode();
+    this.xrayClient.enableAutomaticMode();
 
     this.xrayClient.setDaemonAddress(this.config.daemonAddress);
     this.xrayClient.middleware.setSamplingRules(this.getSamplingRules());
@@ -129,7 +131,7 @@ export class TracingService implements OnModuleInit {
           description: "LoadBalancer HealthCheck",
           http_method: "GET",
           host: "*",
-          url_path: "/status",
+          url_path: "/health",
           fixed_target: 0,
           rate: 0,
         },
